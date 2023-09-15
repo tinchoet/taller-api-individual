@@ -1,35 +1,31 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const url = 'https://apisimpsons.fly.dev/api/personajes';
-    const resultadoElemento = document.getElementById('resultado');
+document.getElementById('btn').addEventListener('click', listaPersonajes);
 
-    fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            try {
-                console.log(data)
-                console.log(Object.keys(data).length)
-                if (Object.keys(data).length > 0) {
-                    let personajesHTML = '';
-                    for (const personaje of data) {
-                        personajesHTML += `
-                        <div>
-                            <p class="cat1">Nombre:</p><p>${personaje.Nombre}</p>
-                            <p class="cat1">Historia:</p><p>${personaje.Historia}</p>
-                            <p class="cat1">Imagen:</p><p><img src="${personaje.Imagen}"></p>
-                            <p class="cat1">Género:</p><p>${personaje.Genero}</p>
-                            <p class="cat1">Estado:</p><p>${personaje.Estado}</p>
-                        </div>
-                    `}
-                    resultadoElemento.innerHTML = personajesHTML;
-                } else {
-                    resultadoElemento.innerHTML = 'No se encontraron datos de personajes.';
-                }
-            } catch (error) {
-                console.error('Error al procesar los datos:', error);
-            }
-        })
-        .catch((error) => {
-            console.error('Error en la solicitud:', error);
-        });
+async function listaPersonajes() {
+  const apiUrl = 'https://apisimpsons.fly.dev/api/personajes';
 
-});
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    const characterListElement = document.getElementById('lista');
+    characterListElement.innerHTML = '';
+
+    data.docs.forEach((character) => {
+      const caja = document.createElement('div');
+      caja.className = 'caja';
+
+      const image = document.createElement('img');
+      image.src = character.Imagen; 
+      image.alt = character.Nombre; 
+
+      const name = document.createElement('span');
+      name.textContent = character.Nombre;
+
+      caja.appendChild(image);
+      caja.appendChild(name);
+
+      characterListElement.appendChild(caja);
+    });
+  } catch (error) {
+    console.error('Error al obtener la lista de personajes:', error);
+  }
+}   
